@@ -1,0 +1,20 @@
+# Neovim runtime/cache
+nvim/.lazy/
+nvim/.cache/
+nvim/.tmp/
+nvim/.undo/
+nvim/.luarc.json
+
+# Local-only overrides (never commit)
+nvim/lua/local.lua
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editor swap files
+*.swp
+*.swo
+
+# Nix
+result
