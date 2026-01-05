@@ -16,6 +16,7 @@
           packages = with pkgs; [
             neovim
             git
+            tmux
             ripgrep
             fd
             gcc
