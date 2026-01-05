@@ -78,61 +78,65 @@ return {
       vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
     end
 
-    mason_lspconfig.setup_handlers({
-      -- default handler for installed servers
-      function(server_name)
-        lspconfig[server_name].setup({
-          capabilities = capabilities,
-        })
-      end,
-      -- ["svelte"] = function()
-      --   -- configure svelte server
-      --   lspconfig["svelte"].setup({
-      --     capabilities = capabilities,
-      --     on_attach = function(client, bufnr)
-      --       vim.api.nvim_create_autocmd("BufWritePost", {
-      --         pattern = { "*.js", "*.ts" },
-      --         callback = function(ctx)
-      --           -- Here use ctx.match instead of ctx.file
-      --           client.notify("$/onDidChangeTsOrJsFile", { uri = ctx.match })
-      --         end,
-      --       })
-      --     end,
-      --   })
-      -- end,
-      ["graphql"] = function()
-        -- configure graphql language server
-        lspconfig["graphql"].setup({
-          capabilities = capabilities,
-          -- filetypes = { "graphql", "gql", "svelte", "typescriptreact", "javascriptreact" },
-          filetypes = { "graphql", "gql", "typescriptreact", "javascriptreact" },
-        })
-      end,
-      ["emmet_ls"] = function()
-        -- configure emmet language server
-        lspconfig["emmet_ls"].setup({
-          capabilities = capabilities,
-          -- filetypes = { "html", "typescriptreact", "javascriptreact", "css", "sass", "scss", "less", "svelte" },
-          filetypes = { "html", "typescriptreact", "javascriptreact", "css", "sass", "scss", "less"},
-        })
-      end,
-      ["lua_ls"] = function()
-        -- configure lua server (with special settings)
-        lspconfig["lua_ls"].setup({
-          capabilities = capabilities,
-          settings = {
-            Lua = {
-              -- make the language server recognize "vim" global
-              diagnostics = {
-                globals = { "vim" },
-              },
-              completion = {
-                callSnippet = "Replace",
-              },
+    -- Manually set up LSP servers
+    -- Note: lspconfig is deprecated but still functional. We use it for convenience.
+    -- The deprecation warnings are expected and can be ignored for now.
+    
+    local servers = {
+      "ts_ls",  -- Updated from deprecated "tsserver"
+      "html",
+      "cssls",
+      "tailwindcss",
+      "lua_ls",
+      "graphql",
+      "emmet_ls",
+      "pyright",
+    }
+
+    -- Configure lua_ls with special settings
+    if lspconfig.lua_ls then
+      lspconfig.lua_ls.setup({
+        capabilities = capabilities,
+        settings = {
+          Lua = {
+            -- make the language server recognize "vim" global
+            diagnostics = {
+              globals = { "vim" },
+            },
+            completion = {
+              callSnippet = "Replace",
             },
           },
-        })
-      end,
-    })
+        },
+      })
+    end
+
+    -- Configure graphql language server
+    if lspconfig.graphql then
+      lspconfig.graphql.setup({
+        capabilities = capabilities,
+        filetypes = { "graphql", "gql", "typescriptreact", "javascriptreact" },
+      })
+    end
+
+    -- Configure emmet language server
+    if lspconfig.emmet_ls then
+      lspconfig.emmet_ls.setup({
+        capabilities = capabilities,
+        filetypes = { "html", "typescriptreact", "javascriptreact", "css", "sass", "scss", "less" },
+      })
+    end
+
+    -- Configure other servers with default settings
+    for _, server_name in ipairs(servers) do
+      -- Skip servers we've already configured
+      if server_name ~= "lua_ls" and server_name ~= "graphql" and server_name ~= "emmet_ls" then
+        if lspconfig[server_name] then
+          lspconfig[server_name].setup({
+            capabilities = capabilities,
+          })
+        end
+      end
+    end
   end,
 }

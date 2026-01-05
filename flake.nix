@@ -22,6 +22,7 @@
             gnumake
             nodejs_20
             python3
+            unzip  # Required for mason to install some tools like stylua
           ];
 
           shellHook = ''
